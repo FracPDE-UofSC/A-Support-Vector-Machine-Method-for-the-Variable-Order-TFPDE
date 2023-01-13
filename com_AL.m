@@ -1,5 +1,5 @@
 function y = com_AL(g,n)
-%% Compute  left  fractional differential 
+%% Compute  left  fractional differential
 AL=zeros(n-1,n-1);
 for i=1:n-1
     for j=1:n-1

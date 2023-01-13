@@ -1,5 +1,5 @@
 
-%% using support vector machine method for solving space fractional equations
+%% using support vector machine method for solving space fractional equation
 clc;clear;
 n = 2^10;
 lam = 1e7;

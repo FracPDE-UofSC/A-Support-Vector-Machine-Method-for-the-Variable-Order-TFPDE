@@ -1,41 +1,40 @@
 
-%% svmÇó½â·ÖÊı½×·½³Ì
 %% using support vector machine method for solving space fractional equations
 clc;clear;
-n = 2^10;% Çø¼ä¸öÊı ÄÚµãn-1
-lam = 1e7;%(lam/2)*e'e
-sig = 1e-1;%ºËº¯ÊıÖĞµÄ sigma
-alpha = 1.9;%·ÖÊı½×µ¼Êı
-h = 1/n;%²½³¤
-dim = n+1;%¾ØÕóÎ¬Êı
+n = 2^10;
+lam = 1e7;
+sig = 1e-1;
+alpha = 1.9;
+h = 1/n;%æ­¥é•¿
+dim = n+1;%çŸ©é˜µç»´æ•°
 theta = 0.9; % weight
 D = 1; % diffusion coefficient
 for i = 1:n+1
-    x(i) = 0 + (i-1)*h; % °üÀ¨ 0 £¬1  ×Ü¹²n+1 ¸öµã
+    x(i) = 0 + (i-1)*h; % åŒ…æ‹¬ 0 ï¼Œ1  æ€»å…±n+1 ä¸ªç‚¹
 end
 % K = 1/(2*cos(pi*alpha/2));
 K = 1;
 hh = (1/h)^alpha;
 fuv = @(u,v) exp(-(u-v)^2/sig^2);%kernel function
-%% ZX_suanli f£º ÓÒ¶ËÏî
+%% ZX_suanli fï¼š å³ç«¯é¡¹
 z1=@(xx) -10/(2*(cos(alpha*pi/2)));
 z2=@(xx) (2/gamma(3-alpha))*(xx.^(2-alpha)+(1-xx).^(2-alpha));
 z3=@(xx) (12/gamma(4-alpha))*(xx.^(3-alpha)+(1-xx).^(3-alpha));
 z4=@(xx) (24/gamma(5-alpha))*(xx.^(4-alpha)+(1-xx).^(4-alpha));
-fr = @(xx) z1(xx)*(z2(xx)-z3(xx)+z4(xx));% ÓÒ¶ËÏîº¯Êı±í´ïÊ½
+fr = @(xx) z1(xx)*(z2(xx)-z3(xx)+z4(xx));% å³ç«¯é¡¹å‡½æ•°è¡¨è¾¾å¼
 fr =  @(xx) - D * 10 * 2*( theta *  (xx.^(2-alpha)/gamma(3-alpha)- 6*xx.^(3-alpha)/gamma(4-alpha) + 12*xx.^(4-alpha)/gamma(5-alpha) ) ...
     +  (1-theta) * ( (1-xx).^(2-alpha)/gamma(3-alpha) - 6*(1-xx).^(3-alpha)/gamma(4-alpha)   ...
     + 12*(1-xx).^(4-alpha)/gamma(5-alpha) ) );
-I = eye(n-1); % n-1¸öÄÚµã
+I = eye(n-1); % n-1ä¸ªå†…ç‚¹
 f = zeros(n+2,1);
-g = g_alpha(n,alpha);%²úÉú·ÖÊı½×µ¼Êı¹©ºóÃæÇóµ¼ÓÃ
+g = g_alpha(n,alpha);%äº§ç”Ÿåˆ†æ•°é˜¶å¯¼æ•°ä¾›åé¢æ±‚å¯¼ç”¨
 %% Compute  left  fractional differential 
-AL = com_AL(g,n);%  dim(AL) = n-1;Ö»ËãÄÚµãµÄ
+AL = com_AL(g,n);%  dim(AL) = n-1;åªç®—å†…ç‚¹çš„
 %%
 AR = AL';% Compute  left  fractional differential 
-fuv1 = @(u) exp(-(u-x(1))^2/sig^2);  %Çóµ¼º¯Êı
-fuvn = @(u) exp(-(u-x(n+1))^2/sig^2); %Çóµ¼º¯Êı
-for i = 2:n %Ö»ËãÄÚµãµÄµ¼Êı
+fuv1 = @(u) exp(-(u-x(1))^2/sig^2);  %æ±‚å¯¼å‡½æ•°
+fuvn = @(u) exp(-(u-x(n+1))^2/sig^2); %æ±‚å¯¼å‡½æ•°
+for i = 2:n %åªç®—å†…ç‚¹çš„å¯¼æ•°
     Fuv1(i-1) = fuv1(x(i));
     Fuvn(i-1) = fuvn(x(i));
 end
@@ -52,7 +51,7 @@ k13 = hh*(theta*AL+(1-theta)*AR)*Fuvn';
 k14 = ones(n-1,1);
 k14 = hh*(theta*AL+(1-theta)*AR)*k14;
 for i = 2:n
-    f(i-1) = fr(x(i));% Ö»ËãÄÚµã
+    f(i-1) = fr(x(i));% åªç®—å†…ç‚¹
 end
 
 k11 =  K^2*k11;
@@ -72,7 +71,7 @@ A = [k11,k12,k13,k14;
     k31,k32,k33,-1;
     k41,-1,-1,0];
 ha = A\f;
-beta0 = ha(1:n-1);%ÄÚµãµÄ
+beta0 = ha(1:n-1);%å†…ç‚¹çš„
 beta1 = ha(n);%
 beta2 = ha(n+1);
 b = ha(n+2);
@@ -93,7 +92,7 @@ end
 
 %% Error
 table(u_exact,u_svm);
-error = norm(u_exact - u_svm,inf); %Çó ÎŞÇî-·¶Êı;
+error = norm(u_exact - u_svm,inf); %æ±‚ æ— ç©·-èŒƒæ•°;
 
 %% Plot 
 plot(x,u_exact,'r')
